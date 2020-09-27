@@ -1,1 +1,1 @@
-# codepoets-challenges
+# challenges
