@@ -1,13 +1,37 @@
 import matplotlib.pyplot as plt
 
+
+DEFAULT_INPUT_FILE_PATH = 'challenge_attachments/2_census_2009b'
+RESULT_FILE_NAME = 'graph.png'
+
+# based on Benford's Law Wikipedia page: https://en.wikipedia.org/wiki/Benford%27s_law
+EXPECTED_DATA_DISTRIBUTION = (30.1, 17.6, 12.5, 9.7, 7.9, 6.7, 5.8, 5.1, 4.6)
+
 # TODO:
-#  docker file/image access
 #  tests
 #  database
 #  project structure cleanup - divide into separate challenges
 
 
-def get_number_from_line(line, i = 0):
+def open_file(get_path_from_user=False):
+    file_path = DEFAULT_INPUT_FILE_PATH
+
+    if get_path_from_user:
+        file_path = input("Please specify your file's path (relative to project's root, "
+                          "without preceding slash, eg: 'files/input_file.txt'): ")
+
+    try:
+        file = open(file_path)
+        return file.read()
+    except FileNotFoundError:
+        print("File not found.")
+        if input("Do you want to try again? y/n: ").lower() == 'y':
+            return open_file(get_path_from_user)
+        else:
+            exit()
+
+
+def get_number_from_line(line, i=0):
     line_columns = line.split()
 
     try:
@@ -26,6 +50,7 @@ def get_keys():
 
 
 def prepare_data(data_list):
+    print("Preparing graph data...")
     digits = get_keys()
     number_sum = 0
     data = []
@@ -48,9 +73,10 @@ def prepare_data(data_list):
 
 
 def make_graph(data):
+    print("Drawing result graph...")
     keys = get_keys()
     x_pos = [i for i, _ in enumerate(keys)]
-    expected_data = (30.1, 17.6, 12.5, 9.7, 7.9, 6.7, 5.8, 5.1, 4.6)
+    expected_data = EXPECTED_DATA_DISTRIBUTION
 
     overlapping_data = {'x': [], 'y': []}
     for i, value in enumerate(data):
@@ -68,19 +94,19 @@ def make_graph(data):
 
     plt.xticks(x_pos, keys)
     plt.legend()
-    plt.show()
+    plt.savefig(RESULT_FILE_NAME)
 
-
-attachment = open('challenge_attachments/2_census_2009b')
-attachment_content = attachment.read()
 
 leading_digits = []
-
-for file_line in attachment_content.split('\n'):
+attachment_content = open_file(input("Do you want to supply your own file? y/n: ").lower() == 'y')
+print("Reading file...")
+for file_line in attachment_content.split('\n')[1:]:
     number = get_number_from_line(file_line)
     if number is not None:
+        print('number', number)
         leading_digit = str(number)[0]
         leading_digits.append(int(leading_digit))
 
 graph_data = prepare_data(leading_digits)
 make_graph(graph_data)
+print("Done.")
