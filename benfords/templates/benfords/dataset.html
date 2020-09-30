@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <a href="{% url 'benfords:datasets' %}">
+    < List
+  </a>
+
+  <div class="row mt-5">
+    <div class="col-8">
+      <img src="{{ dataset.result_graph.url }}">
+    </div>
+
+    <div class="col-4 border-left p-4 bg-light">
+      <strong>Uploaded:</strong> {{ dataset.created_at | date:"Y-m-d H:i" }}<br>
+      <strong>Input file:</strong> <a href="{{ dataset.input_file.url }}">{{ dataset.input_file.name }}</a>
+    </div>
+  </div>
+{% endblock %}

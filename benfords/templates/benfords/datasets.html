@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <a href="/">
+    < Home
+  </a>
+  <h1>Data sets</h1>
+
+  <div class="mt-5 border-bottom pb-2">
+    <a class="btn btn-primary btn-sm" href="{% url 'benfords:new_dataset' %}">
+      Upload data
+    </a>
+  </div>
+
+  <div class="row mt-5">
+    {% for dataset in datasets %}
+      <div class="col-3 text-center">
+        <a href="{% url 'benfords:dataset' dataset.pk %}">
+          <img src="{{ dataset.result_graph.url }}" style="width: 100%;">
+          Uploaded
+          {{ dataset.created_at | date:"Y-m-d H:i" }}
+        </a>
+      </div>
+    {% empty %}
+      No data sets
+    {% endfor %}
+{% endblock %}

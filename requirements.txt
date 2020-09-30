@@ -1,1 +1,4 @@
+Django
 matplotlib
+psycopg2-binary
+django-crispy-forms==1.9.2

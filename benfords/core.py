@@ -1,34 +1,14 @@
+import io
+
 import matplotlib.pyplot as plt
+from django.core.files.images import ImageFile
 
 
-DEFAULT_INPUT_FILE_PATH = 'challenge_attachments/2_census_2009b'
+DEFAULT_INPUT_FILE_PATH = 'attachments/2_census_2009b'
 RESULT_FILE_NAME = 'graph.png'
 
 # based on Benford's Law Wikipedia page: https://en.wikipedia.org/wiki/Benford%27s_law
 EXPECTED_DATA_DISTRIBUTION = (30.1, 17.6, 12.5, 9.7, 7.9, 6.7, 5.8, 5.1, 4.6)
-
-# TODO:
-#  tests
-#  database
-#  project structure cleanup - divide into separate challenges
-
-
-def open_file(get_path_from_user=False):
-    file_path = DEFAULT_INPUT_FILE_PATH
-
-    if get_path_from_user:
-        file_path = input("Please specify your file's path (relative to project's root, "
-                          "without preceding slash, eg: 'files/input_file.txt'): ")
-
-    try:
-        file = open(file_path)
-        return file.read()
-    except FileNotFoundError:
-        print("File not found.")
-        if input("Do you want to try again? y/n: ").lower() == 'y':
-            return open_file(get_path_from_user)
-        else:
-            exit()
 
 
 def get_number_from_line(line, i=0):
@@ -50,7 +30,6 @@ def get_keys():
 
 
 def prepare_data(data_list):
-    print("Preparing graph data...")
     digits = get_keys()
     number_sum = 0
     data = []
@@ -94,19 +73,23 @@ def make_graph(data):
 
     plt.xticks(x_pos, keys)
     plt.legend()
-    plt.savefig(RESULT_FILE_NAME)
+
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    return ImageFile(buffer)
 
 
-leading_digits = []
-attachment_content = open_file(input("Do you want to supply your own file? y/n: ").lower() == 'y')
-print("Reading file...")
-for file_line in attachment_content.split('\n')[1:]:
-    number = get_number_from_line(file_line)
-    if number is not None:
-        print('number', number)
-        leading_digit = str(number)[0]
-        leading_digits.append(int(leading_digit))
+def handle_input_file(input_file):
+    file = open(input_file.path)
+    file_content = file.read()
 
-graph_data = prepare_data(leading_digits)
-make_graph(graph_data)
-print("Done.")
+    leading_digits = []
+    for file_line in file_content.split('\n')[1:]:
+        number = get_number_from_line(file_line)
+        if number is not None:
+            leading_digit = str(number)[0]
+            leading_digits.append(int(leading_digit))
+
+    graph_data = prepare_data(leading_digits)
+    graph_file = make_graph(graph_data)
+    return graph_file
