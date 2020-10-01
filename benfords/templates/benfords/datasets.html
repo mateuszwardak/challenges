@@ -4,7 +4,7 @@
   <a href="/">
     < Home
   </a>
-  <h1>Data sets</h1>
+  <h1>Benford's Law</h1>
 
   <div class="mt-5 border-bottom pb-2">
     <a class="btn btn-primary btn-sm" href="{% url 'benfords:new_dataset' %}">
@@ -12,6 +12,7 @@
     </a>
   </div>
 
+  Uploaded data sets:
   <div class="row mt-5">
     {% for dataset in datasets %}
       <div class="col-3 text-center">
