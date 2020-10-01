@@ -22,9 +22,9 @@ from . import views
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
-    # path('widgets/', views.WidgetsView.as_view(), name='widgets'),
+    path('widgets/', views.WidgetsView.as_view(), name='widgets'),
     path('benfords/', include('benfords.urls', namespace='benfords')),
-    # path('stacktraces/', views.StackTracesView.as_view(), name='stack_traces'),
+    path('stacktraces/', views.StackTracesView.as_view(), name='stack_traces'),
     path('admin/', admin.site.urls),
 ]
 

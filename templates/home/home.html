@@ -3,15 +3,15 @@
 {% block content %}
   <h1>Challenges</h1>
   <ul class="list-group mt-5">
-    <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+    <a href="{% url 'widgets' %}" class="list-group-item list-group-item-action" aria-current="true">
       <strong>#1</strong> Widgets
     </a>
     <a href="{% url 'benfords:datasets' %}"
        class="list-group-item list-group-item-action" aria-current="true">
       <strong>#2</strong> Benford's Law
     </a>
-    <a href="#" class="list-group-item list-group-item-action" aria-current="true">
-      <strong>#3</strong> Python Stack Traces
+    <a href="{% url 'stack_traces' %}" class="list-group-item list-group-item-action" aria-current="true">
+      <strong>#3</strong> Python Stack Trace Interpretation
     </a>
   </ul>
 {% endblock %}

@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <a href="/">
+    < Home
+  </a>
+  <h1 class="mb-5">Widgets</h1>
+
+  <p>It looks like it's some kind of distributor company that buys products
+    from suppliers (producers or other distributors) and sells them to
+    their customers (probably mostly stores). The distributor has its warehouses
+    around the world.</p>
+  <p>Products from suppliers are bought in packages at fixed cost in fixed quantities
+    (based on the proviced data, but these could not necessarily be fixed all the time),
+    stored in warehouses, and sold in these packages to the customers at individually
+    negotiated prices.</p>
+  <p>The software would serve as a warehouse management system, storing data such as
+    supplier and customer registry, warehouses, product types, physical products
+    stored in warehouses, shippings, automated emails about shippings and payments, etc.</p>
+
+  <p>My first iteration of database schema would look like presented below.
+    Database table names are written in uppercase, while column names are lowercase
+    with key/data type after a colon.</p>
+
+  <div class="row mt-4">
+    <div class="col-3 p-3">
+      <code>
+        SUPPLIER<br>
+        id: integer, PK<br>
+        name: varchar (20)<br>
+        phone: varchar (12)<br>
+        email: varchar (20)<br>
+        address: text<br>
+        notes: text<br>
+        agreement_date: date
+      </code>
+    </div>
+
+    <div class="col-3 p-3">
+      <code>
+        CUSTOMER<br>
+        id: integer, PK<br>
+        name: varchar(20)<br>
+        phone: varchar(12)<br>
+        email: varchar(20)<br>
+        address: text<br>
+        notes: text<br>
+        agreement_date: date
+      </code>
+    </div>
+
+    <div class="col-3 p-3">
+      <code>
+        WAREHOUSE<br>
+        id: integer, PK<br>
+        codename: varchar(3)<br>
+        phone: varchar(12)<br>
+        email: varchar(20)<br>
+        address: text<br>
+        notes: text
+      </code>
+    </div>
+
+    <div class="col-3 p-3">
+      <code>
+        PACKAGE_TYPE<br>
+        id: integer, PK<br>
+        name: varchar(10)<br>
+        codename: varchar(5)
+      </code>
+    </div>
+
+    <div class="col-3 p-3">
+      <code>
+        PRODUCT_CLASS<br>
+        (product "template")<br>
+        id: integer, PK<br>
+        supplier: FK -> SUPPLIER<br>
+        name: varchar(20)<br>
+        min_qty: int<br>
+        cost: decimal(2)
+      </code>
+    </div>
+
+    <div class="col-3 p-3">
+      <code>
+        PRODUCT_PACKAGE<br>
+        (physical product package stored in warehouse)<br>
+        id: integer, PK<br>
+        product_cls: FK -> PRODUCT_CLASS<br>
+        warehouse: FK -> WAREHOUSE<br>
+        package_type: FK -> PACKAGE_TYPE<br>
+        qty: int<br>
+        items_in_package: int<br>
+        arrived_at: timestamp
+      </code>
+    </div>
+
+    <div class="col-3 p-3">
+      <code>
+        SHIPPING<br>
+        (whole shipping to one customer, can contain multiple packages)<br>
+        id: integer, PK<br>
+        customer: FK -> CUSTOMER<br>
+        sent_at: timestamp<br>
+        paid_at: timestamp<br>
+        price_sum: decimal(2)<br>
+        notes: text
+      </code>
+    </div>
+
+    <div class="col-3 p-3">
+      <code>
+        SHIPPING_ITEM<br>
+        id: integer, PK<br>
+        shipping: FK -> SHIPPING<br>
+        package: FK -> PRODUCT_PACKAGE<br>
+        qty: int<br>
+        price: decimal(2)
+      </code>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    To refine the schema:
+    <ul class="list-group pl-3">
+      <li>
+        I'd like to know if the item cost is always fixed (it's always
+        the same from one supplier) - if not, I'd move the 'cost' column from PRODUCT_CLASS
+        to PRODUCT_PACKAGE table.
+      </li>
+      <li>I'd also consider storing suppliers and customers in one 'contractor' table,
+        with added 'type' column, to reduce data redundancy - they share exactly the same fields.
+        That would, however, make them more difficult to manage.</li>
+      <li>The minimum quantity ('min_qty' column) should also be discussed - what it's exactly for,
+        because that would change the column placement among tables.</li>
+      <li>SUPPLIER and CUSTOMER tables could also contain more specific information about agreement
+        and contact info, and the 'address' column could be split into several columns,
+        containing separate data: street, postal code, city, etc.</li>
+      <li>Discussing which data could sometimes not be provided would force us to make some columns
+        nullable, although apart from 'notes' columns, currently I see no need for it.</li>
+    </ul>
+  </div>
+
+  <div class="mt-5">
+    <a href="/">
+      < Home
+    </a>
+  </div>
+{% endblock %}
