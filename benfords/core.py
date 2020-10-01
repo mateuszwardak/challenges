@@ -52,7 +52,6 @@ def prepare_data(data_list):
 
 
 def make_graph(data):
-    print("Drawing result graph...")
     keys = get_keys()
     x_pos = [i for i, _ in enumerate(keys)]
     expected_data = EXPECTED_DATA_DISTRIBUTION

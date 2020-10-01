@@ -7,7 +7,11 @@
 
   <div class="row mt-5">
     <div class="col-8">
-      <img src="{{ dataset.result_graph.url }}">
+      {% if dataset.result_graph %}
+        <img src="{{ dataset.result_graph.url }}">
+      {% else %}
+        No image
+      {% endif %}
     </div>
 
     <div class="col-4 border-left p-4 bg-light">
