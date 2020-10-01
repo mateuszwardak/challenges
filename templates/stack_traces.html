@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <style>
+    code {
+        display: block;
+        white-space: pre-line;
+        margin-bottom: 1rem;
+        background-color: #ffebee;
+        color: #e53935;
+        padding: 0 1rem 1rem;
+        margin-top: 2rem;
+    }
+  </style>
+
+  <a href="/">
+    < Home
+  </a>
+  <h1 class="mb-5">Python Stack Trace Interpretation</h1>
+
+  <div>
+    <div class="border-bottom">
+      <code>
+        Traceback Problem 1
+        ===================
+        Traceback (most recent call last):
+          File "stack_traces.py", line 36, in run_trace
+            f()
+          File "stack_traces.py", line 45, in &lt;lambda&gt;
+            run_trace(1, lambda: perform_calculation(add, '1', 3))
+          File "stack_traces.py", line 8, in perform_calculation
+            calc(x, y)
+          File "stack_traces.py", line 12, in add
+            return x + y
+        TypeError: can only concatenate str (not "int") to str
+      </code>
+      <p>Adding two different types - I'd make sure the values are converted to number
+        before adding them. I'd go to line 8 and add call float() (or int(), depending on context,
+        but I think float() would be safer, since we won't lose potential decimal data)
+        on both x and y. This would make sure that even strings are valid arguments
+        for perform_calculation().</p>
+    </div>
+
+    <div class="border-bottom">
+      <code>
+        Traceback Problem 2
+        ===================
+        Traceback (most recent call last):
+          File "stack_traces.py", line 36, in run_trace
+            f()
+          File "stack_traces.py", line 46, in &lt;lambda&gt;
+            run_trace(2, lambda: perform_calculation(add, 7, '3'))
+          File "stack_traces.py", line 8, in perform_calculation
+            calc(x, y)
+          File "stack_traces.py", line 12, in add
+            return x + y
+        TypeError: unsupported operand type(s) for +: 'int' and 'str'
+      </code>
+      <p>
+        Same as above, just reversed. Line 8, convert x and y to number types.
+      </p>
+    </div>
+
+    <div class="border-bottom">
+      <code>
+        Traceback Problem 3
+        ===================
+        Traceback (most recent call last):
+          File "stack_traces.py", line 36, in run_trace
+            f()
+          File "stack_traces.py", line 47, in &lt;lambda&gt;
+            run_trace(3, lambda: perform_calculation(mult, '3', '3'))
+          File "stack_traces.py", line 8, in perform_calculation
+            calc(x, y)
+          File "stack_traces.py", line 15, in mult
+            return x * y
+        TypeError: can't multiply sequence by non-int of type 'str'
+      </code>
+      <p>Again, similar problem, just with multiplication.
+        I'd parse the arguments to float at line 8.</p>
+    </div>
+
+    <div class="border-bottom">
+      <code>
+        Traceback Problem 4
+        ===================
+        Traceback (most recent call last):
+          File "stack_traces.py", line 36, in run_trace
+            f()
+          File "stack_traces.py", line 48, in &lt;lambda&gt;
+            run_trace(4, lambda: perform_calculation(mult, [4], [3]))
+          File "stack_traces.py", line 8, in perform_calculation
+            calc(x, y)
+          File "stack_traces.py", line 15, in mult
+            return x * y
+        TypeError: can't multiply sequence by non-int of type 'list'
+      </code>
+      <p>We should validate both arguments to be either numbers or strings
+        (and then parse them to numbers). I'd jump to line 8 and validate it
+        before calling calc() function.</p>
+    </div>
+
+    <div class="border-bottom">
+      <code>
+        Traceback Problem 5
+        ===================
+        Traceback (most recent call last):
+          File "stack_traces.py", line 36, in run_trace
+            f()
+          File "stack_traces.py", line 49, in &lt;lambda&gt;
+            run_trace(5, lambda: perform_calculation(innoc, '1', 3))
+          File "stack_traces.py", line 8, in perform_calculation
+            calc(x, y)
+          File "stack_traces.py", line 22, in innoc
+            spelunk()
+          File "stack_traces.py", line 21, in spelunk
+            raise ValueError('Invalid')
+        ValueError: Invalid
+      </code>
+      <p>Wrong calculation method name in first argument of perform_calculation()
+        at line 49. I'd find out what method should be used there and replace "innoc"
+        with correct method name.</p>
+    </div>
+
+    <div class="border-bottom">
+      <code>
+        Traceback Problem 6
+        ===================
+        Traceback (most recent call last):
+          File "stack_traces.py", line 36, in run_trace
+            f()
+          File "stack_traces.py", line 50, in &lt;lambda&gt;
+            run_trace(6, lambda: comp_calc([1, 2, 3], 1, add))
+          File "stack_traces.py", line 30, in comp_calc
+            return [perform_calculation(calc, x_i, y_i) for x_i, y_i in zip(x, y)]
+        TypeError: zip argument #2 must support iteration
+      </code>
+      <p>I assume the code adds each element in first argument to each element
+        in second argument. I'd jump to line 50 and make the second argument a list
+        ([1] instead of 1). That would make it work.</p>
+    </div>
+
+    <div class="border-bottom">
+      <code>
+        Traceback Problem 7
+        ===================
+        Traceback (most recent call last):
+          File "stack_traces.py", line 36, in run_trace
+            f()
+          File "stack_traces.py", line 51, in &lt;lambda&gt;
+            run_trace(7, lambda: comp_calc([1, 2, [3]], [4, 5, 6], add))
+          File "stack_traces.py", line 30, in comp_calc
+            return [perform_calculation(calc, x_i, y_i) for x_i, y_i in zip(x, y)]
+          File "stack_traces.py", line 30, in &lt;listcomp&gt;
+            return [perform_calculation(calc, x_i, y_i) for x_i, y_i in zip(x, y)]
+          File "stack_traces.py", line 8, in perform_calculation
+            calc(x, y)
+          File "stack_traces.py", line 12, in add
+            return x + y
+        TypeError: can only concatenate list (not "int") to list
+      </code>
+      <p>I assume the code tries to add the [3] inside the list in first argument (line 51)
+        to one of integers from the list in second argument. Either make the first argument
+        list flat ([1, 2, 3]) or add some recursion at line 30 to support list depth.</p>
+    </div>
+
+    <div class="border-bottom">
+      <code>
+        Traceback Problem 8
+        ===================
+        Traceback (most recent call last):
+          File "stack_traces.py", line 36, in run_trace
+            f()
+          File "stack_traces.py", line 52, in &lt;lambda&gt;
+            run_trace(8, lambda: calc_dict({'one': 1, 'two': '2'}, 'one', 'two', add))
+          File "stack_traces.py", line 26, in calc_dict
+            return perform_calculation(calc, d[k1], d[k2])
+          File "stack_traces.py", line 8, in perform_calculation
+            calc(x, y)
+          File "stack_traces.py", line 12, in add
+            return x + y
+        TypeError: unsupported operand type(s) for +: 'int' and 'str'
+      </code>
+      <p>Similar problem to first ones - making math calculation on two different types.
+        I'd go to line 26 and convert the values (d[k1] and d[k2]) to numbers.</p>
+    </div>
+
+    <div class="border-bottom">
+      <code>
+        Traceback Problem 9
+        ===================
+        Traceback (most recent call last):
+          File "stack_traces.py", line 36, in run_trace
+            f()
+          File "stack_traces.py", line 53, in &lt;lambda&gt;
+            run_trace(9, lambda: calc_dict({}, 'one', 'two', add))
+          File "stack_traces.py", line 26, in calc_dict
+            return perform_calculation(calc, d[k1], d[k2])
+        KeyError: 'one'
+      </code>
+      <p>Provided key doesn't exist in the dict. I'd go to line 26
+        and add a check if both keys exist in provided dict.</p>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <a href="/">
+      < Home
+    </a>
+  </div>
+{% endblock %}
