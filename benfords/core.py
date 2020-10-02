@@ -12,6 +12,13 @@ EXPECTED_DATA_DISTRIBUTION = (30.1, 17.6, 12.5, 9.7, 7.9, 6.7, 5.8, 5.1, 4.6)
 
 
 def get_number_from_line(line, i=0):
+    """
+    We're trying to get a number from the first possible column.
+    It works for supplied file and gives users flexibility
+    in creating input files - they don't have to focus on file formatting,
+    even a simple file with numbers divided by new lines (like: "XXX\nYYY\nZZZ")
+    will be enough to provide relevant data.
+    """
     line_columns = line.split()
 
     try:
@@ -29,7 +36,7 @@ def get_keys():
     return tuple(range(1, 10))
 
 
-def prepare_data(data_list):
+def prepare_graph_data(data_list):
     digits = get_keys()
     number_sum = 0
     data = []
@@ -78,17 +85,24 @@ def make_graph(data):
     return ImageFile(buffer)
 
 
-def handle_input_file(input_file):
-    file = open(input_file.path)
-    file_content = file.read()
-
+def prepare_leading_digits(file_content):
     leading_digits = []
+
     for file_line in file_content.split('\n')[1:]:
         number = get_number_from_line(file_line)
         if number is not None:
             leading_digit = str(number)[0]
             leading_digits.append(int(leading_digit))
 
-    graph_data = prepare_data(leading_digits)
+    return leading_digits
+
+
+def handle_input_file(input_file):
+    file = open(input_file.path)
+    file_content = file.read()
+
+    leading_digits = prepare_leading_digits(file_content)
+
+    graph_data = prepare_graph_data(leading_digits)
     graph_file = make_graph(graph_data)
     return graph_file
