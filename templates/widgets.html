@@ -133,10 +133,11 @@
         with added 'type' column, to reduce data redundancy - they share exactly the same fields.
         That would, however, make them more difficult to manage.</li>
       <li>The minimum quantity ('min_qty' column) should also be discussed - what it's exactly for,
-        because that would change the column placement among tables.</li>
-      <li>SUPPLIER and CUSTOMER tables could also contain more specific information about agreement
-        and contact info, and the 'address' column could be split into several columns,
-        containing separate data: street, postal code, city, etc.</li>
+        because that could, for example, change the column placement among tables.</li>
+      <li>SUPPLIER and CUSTOMER tables could contain more specific information about these contractors,
+        e.g. agreements and contact info.</li>
+      <li>It would make sense to consider splitting 'address' columns into several columns containing
+        separate data: street, postal code, city, etc.</li>
       <li>Discussing which data could sometimes not be provided would force us to make some columns
         nullable, although apart from 'notes' columns, currently I see no need for it.</li>
     </ul>
