@@ -99,7 +99,11 @@ def prepare_leading_digits(file_content):
 
 def handle_input_file(input_file):
     file = open(input_file.path)
-    file_content = file.read()
+
+    try:
+        file_content = file.read()
+    except UnicodeDecodeError:
+        raise Exception("Supplied file isn't a text file.")
 
     leading_digits = prepare_leading_digits(file_content)
 
